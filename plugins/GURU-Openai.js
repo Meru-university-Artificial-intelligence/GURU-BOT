@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-const brainId = 'YOUR_BRAIN_ID';
-const apiKey = 'YOUR_API_KEY';
+const brainId = '178542';
+const apiKey = 'JeCWodCBpk5lxmIa';
 
 let handler = async (m, { text, conn, usedPrefix, command }) => {
   if (!text && !(m.quoted && m.quoted.text)) {

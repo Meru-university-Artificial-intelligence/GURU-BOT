@@ -1,79 +1,29 @@
+
 import fetch from 'node-fetch';
 
-const brainId = '178542';
-const apiKey = 'JeCWodCBpk5lxmIa';
-
-let handler = async (m, { text, conn, usedPrefix, command }) => {
-  if (!text && !(m.quoted && m.quoted.text)) {
-    throw `Please provide some text or quote a message to get a response.`;
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  const name = conn.getName(m.sender);
+  if (!text) {
+    throw `Hi *${name}*, do you want to talk? Respond with *${usedPrefix + command}* (your message)\n\n📌 Example: *${usedPrefix + command}* Hi bot`;
   }
+  
+  m.react('🗣️');
 
-  if (!text && m.quoted && m.quoted.text) {
-    text = m.quoted.text;
-  }
+  const msg = encodeURIComponent(text);
+  const brainId = '178542';
+  const apiKey = 'JeCWodCBpk5lxmIa';
 
-  try {
-    m.react(rwait)
-    const { key } = await conn.sendMessage(m.chat, {
-      image: { url: 'https://telegra.ph/file/c3f9e4124de1f31c1c6ae.jpg' },
-      caption: 'Thinking....'
-    }, {quoted: m})
-    conn.sendPresenceUpdate('composing', m.chat);
-    const prompt = encodeURIComponent(text);
-
-    const brainshopEndpoint = `https://api.brainshop.ai/get?bid=${brainId}&key=${apiKey}&uid=${m.sender}&msg=${prompt}`;
-
-    try {
-      let response = await fetch(brainshopEndpoint);
-      let data = await response.json();
-      let result = data.cnt;
-
-      if (!result) {
-        throw new Error('No valid response from the BrainShop API');
-      }
-
-      await conn.relayMessage(m.chat, {
-        protocolMessage: {
-          key,
-          type: 14,
-          editedMessage: {
-            imageMessage: { caption: result }
-          }
-        }
-      }, {});
-      m.react(done);
-    } catch (error) {
-      console.error('Error from the BrainShop API:', error);
-
-      const model = 'llama';
-      const senderNumber = m.sender.replace(/[^0-9]/g, ''); 
-      const session = `GURU_BOT_${senderNumber}`;
-      const guru2 = `https://ultimetron.guruapi.tech/gpt3?prompt=${prompt}`;
-
-      let response = await fetch(guru2);
-      let data = await response.json();
-      let result = data.completion;
-
-      await conn.relayMessage(m.chat, {
-        protocolMessage: {
-          key,
-          type: 14,
-          editedMessage: {
-            imageMessage: { caption: result }
-          }
-        }
-      }, {});
-      m.react(done);
-    }
-
-  } catch (error) {
-    console.error('Error:', error);
-    throw `*ERROR*`;
-  }
+  const brainshopEndpoint = `https://api.brainshop.ai/get?bid=${brainId}&key=${apiKey}&uid=${m.sender}&msg=${msg}`;
+  
+  const res = await fetch(brainshopEndpoint);
+  const json = await res.json();
+  
+  let reply = json.cnt;
+  m.reply(reply);
 };
 
-handler.help = ['chatgpt'];
-handler.tags = ['AI'];
-handler.command = ['bro', 'ai', 'brainbot'];
+handler.help = ['bot'];
+handler.tags = ['fun'];
+handler.command = ['bot2', 'brainbot'];
 
 export default handler;

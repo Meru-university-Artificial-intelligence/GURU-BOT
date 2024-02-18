@@ -1,4 +1,3 @@
-
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
@@ -10,12 +9,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   m.react('🗣️');
 
   const msg = encodeURIComponent(text);
-  const brainId = '178542';
-  const apiKey = 'JeCWodCBpk5lxmIa';
-
-  const brainshopEndpoint = `https://api.brainshop.ai/get?bid=${brainId}&key=${apiKey}&uid=${m.sender}&msg=${msg}`;
+  const uid = encodeURIComponent(m.sender);
   
-  const res = await fetch(brainshopEndpoint);
+  const res = await fetch(`http://api.brainshop.ai/get?bid=178542&key=JeCWodCBpk5lxmIa&uid=${uid}&msg=${msg}`);
+
   const json = await res.json();
   
   let reply = json.cnt;
@@ -24,6 +21,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
 handler.help = ['bot'];
 handler.tags = ['fun'];
-handler.command = ['bot2', 'brainbot'];
+handler.command = ['bot2', 'fun'];
 
 export default handler;
